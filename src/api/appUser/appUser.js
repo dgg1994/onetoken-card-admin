@@ -3,7 +3,7 @@ import request from '@/utils/request'
 //列表
 export function appUserList(data) {
     return request({
-        url: 'appUserSys/findList',
+        url: 'appUser/findList',
         method: 'post',
         data
     })
@@ -24,7 +24,7 @@ export function upWalletState(id,state) {
 //查询用户kyc认证信息
 export function findKycFile(uid) {
     return request({
-        url: 'appUserSys/findKycFile',
+        url: 'appUser/findKycFile',
         method: 'get',
         params: {
             'uid': uid,

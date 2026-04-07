@@ -23,14 +23,15 @@
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
           <el-table-column label="序号" type="index" width="50" align="center" />
-          <el-table-column label="订单编号" align="center" prop="requestOrderId" />
-           <el-table-column label="所属用户" align="center">
+          <el-table-column label="用户uid" align="center" prop="uid" />
+          <el-table-column label="用户邮箱" align="center">
             <template slot-scope="scope">
               <span>
                 {{ scope.row.appUserData.userEmail }}
               </span>
             </template>
           </el-table-column>
+          <el-table-column label="订单编号" align="center" prop="requestOrderId" />
           <el-table-column label="银行卡号" align="center" prop="cardNo" />
           <el-table-column label="银行卡类型" align="center" prop="cardType" />
           <el-table-column label="银行卡余额" align="center" prop="balance" />

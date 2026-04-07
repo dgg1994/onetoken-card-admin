@@ -34,8 +34,8 @@
           <el-table-column label="用户uid" align="center" prop="uid" />
           <el-table-column label="用户邮箱" align="center" prop="userEmail" />
           <el-table-column label="用户手机号" align="center" prop="userTel" />
-          <el-table-column label="钱包类型" align="center" prop="walletType" />
-          <el-table-column label="钱包地址" align="center" prop="walletAddress" />
+          <!-- <el-table-column label="钱包类型" align="center" prop="walletType" />
+          <el-table-column label="钱包地址" align="center" prop="walletAddress" /> -->
           <el-table-column label="充值金额" align="center" prop="topupAmount" />
           <el-table-column label="充值前金额" align="center" prop="topupAmountForward" />
           <el-table-column label="充值后金额" align="center" prop="topupAmountBack" />

@@ -29,13 +29,14 @@
           <el-table-column label="银行卡类型" align="center" prop="cardType" />
           <el-table-column label="银行卡号" align="center" prop="cardNo" />
           <el-table-column label="交易手续费" align="center" prop="handlingFees" />
-          <el-table-column label="消费金额" align="center">
+          <el-table-column label="交易金额" align="center">
             <template slot-scope="scope">
               <span>
                 {{ scope.row.localCurrencyAmt+" "+ scope.row.localCurrency}}
               </span>
             </template>
           </el-table-column>
+          <el-table-column label="交易类型" align="center" prop="transType" />
           <el-table-column label="交易状态" align="center" prop="orderStateName" />
           <el-table-column label="交易时间" align="center" prop="setTime" />
         </el-table>
@@ -82,7 +83,7 @@ export default {
     //交易列表
     getList() {
       this.loading = true;
-      this.queryParams.transType = "AUTH"
+      // this.queryParams.transType = "TOPUP"
       findTransaction(this.queryParams).then(res => {
         this.dataList = res.data.list
         this.total = res.data.total

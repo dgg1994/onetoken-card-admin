@@ -3,274 +3,107 @@
     <div class="app-container">
       <div class="conetntBox">
         <div class="flex_sb">
-          <el-form
-            :model="queryParams"
-            size="small"
-            :inline="true"
-            label-width="68px"
-          >
+          <el-form :model="queryParams" size="small" :inline="true" label-width="68px">
             <el-form-item label="" prop="userEmail">
-              <el-input
-                v-model="queryParams.userEmail"
-                placeholder="请输入用户邮箱"
-              />
+              <el-input v-model="queryParams.userEmail" placeholder="请输入用户邮箱" />
             </el-form-item>
             <el-form-item label="" prop="mobileNumber">
-              <el-input
-                v-model="queryParams.mobileNumber"
-                placeholder="请输入手机号"
-              />
+              <el-input v-model="queryParams.mobileNumber" placeholder="请输入手机号" />
             </el-form-item>
             <el-form-item label="" prop="kycState">
-              <el-select
-                v-model="queryParams.kycState"
-                filterable
-                placeholder="请选择kyc认证状态"
-                :disabled="upState"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in kycStateList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
+              <el-select v-model="queryParams.kycState" filterable placeholder="请选择kyc认证状态" :disabled="upState"
+                style="width: 100%">
+                <el-option v-for="item in kycStateList" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="userState">
-              <el-select
-                v-model="queryParams.userState"
-                filterable
-                placeholder="请选择用户状态"
-                :disabled="upState"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in userStateList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="walletState">
-              <el-select
-                v-model="queryParams.walletState"
-                filterable
-                placeholder="钱包开启状态"
-                :disabled="upState"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in walletStateList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
+              <el-select v-model="queryParams.userState" filterable placeholder="请选择用户状态" :disabled="upState"
+                style="width: 100%">
+                <el-option v-for="item in userStateList" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
 
+
             <el-form-item>
-              <el-button
-                type="primary"
-                icon="el-icon-search"
-                size="mini"
-                @click="handleQuery"
-                >搜索</el-button
-              >
-              <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-                >重置</el-button
-              >
+              <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+              <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
-          <el-table-column
-            label="序号"
-            type="index"
-            width="50"
-            align="center"
-          />
-          <el-table-column label="邮箱" align="center" prop="userEmail" />
-          <el-table-column
-            label="国家代码"
-            align="center"
-            prop="mobilePrefix"
-          />
+          <el-table-column label="序号" type="index" width="50" align="center" />
+          <el-table-column label="用户uid" align="center" prop="uid" />
+          <el-table-column label="用户邮箱" align="center" prop="userEmail" />
+          <el-table-column label="区号" align="center" prop="mobilePrefix" />
           <el-table-column label="手机号" align="center" prop="mobileNumber" />
-          <el-table-column
-            label="谷歌密钥"
-            align="center"
-            prop="googleSecretkey"
-          />
-          <el-table-column
-            label="上级"
-            align="center"
-            prop="superName"
-          />
-          <el-table-column
-            label="邀请码"
-            align="center"
-            prop="invitationCode"
-          />
-          <el-table-column
-            label="钱包地址"
-            align="center"
-            prop="tronUsdtAcount"
-          />
-          <el-table-column
-            label="钱包余额"
-            align="center"
-            prop="walletBalance"
-          />
-          <el-table-column
-            label="冻结资产"
-            align="center"
-            prop="freezeBalance"
-          />
-          <el-table-column
-            label="kyc认证状态"
-            align="center"
-            prop="kycStateName"
-          />
-
+          <el-table-column label="邀请码" align="center" prop="invitationCode" />
+          <el-table-column label="钱包余额" align="center" prop="walletBalance" />
+          <el-table-column label="冻结资产" align="center" prop="freezeBalance" />
+          <el-table-column label="kyc认证状态" align="center" prop="kycStateName" />
           <el-table-column label="用户状态" align="center">
             <template slot-scope="scope">
               <span v-if="scope.row.userState === 1"> 正常 </span>
               <span v-else> 注销 </span>
             </template>
           </el-table-column>
-          <el-table-column label="钱包开启状态" align="center">
-            <template slot-scope="scope">
-              <span v-if="scope.row.walletState"> 开启 </span>
-              <span v-else> 关闭 </span>
-            </template>
-          </el-table-column>
           <el-table-column label="注册时间" align="center" prop="setTime" />
           <el-table-column label="操作" align="center">
             <template slot-scope="scope" v-if="scope.row.roleId !== 1">
-              <!-- <el-button v-if="scope.row.walletState" size="mini" type="text" @click="walletEntrance(scope.row,false)">关闭钱包入口</el-button>
-              <el-button v-else size="mini" type="text" @click="walletEntrance(scope.row,true)">开启钱包入口</el-button> -->
-              <el-dropdown
-                size="mini"
-                @command="(command) => handleCommand(command, scope.row)"
-              >
-                <el-button size="mini" type="text"
-                  >操作<i class="el-icon-arrow-down el-icon--right"></i
-                ></el-button>
+              <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
+                <el-button size="mini" type="text">操作<i class="el-icon-arrow-down el-icon--right"></i></el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
-                    v-if="scope.row.walletState"
-                    command="closeWallet"
-                    >关闭钱包入口</el-dropdown-item
-                  >
-                  <el-dropdown-item v-else command="openWallet"
-                    >开启钱包入口</el-dropdown-item
-                  >
-                  <el-dropdown-item command="walletTopUp"
-                    >钱包充值</el-dropdown-item
-                  >
-                  <el-dropdown-item command="kycInfo"
-                    >kyc认证信息</el-dropdown-item
-                  >
-                  <el-dropdown-item command="cardList"
-                    >持有银行卡</el-dropdown-item
-                  >
-                  <el-dropdown-item command="applyList"
-                    >开卡申请记录</el-dropdown-item
-                  >
-                  <el-dropdown-item command="topupList"
-                    >银行卡充值记录</el-dropdown-item
-                  >
-                  <el-dropdown-item command="consumeList"
-                    >银行卡消费记录</el-dropdown-item
-                  >
-                  <el-dropdown-item command="walletList"
-                    >钱包交易记录</el-dropdown-item
-                  >
-                  <el-dropdown-item command="holderList"
-                    >持卡人信息</el-dropdown-item
-                  >
-                  <el-dropdown-item command="bindChannel"
-                    >绑定渠道商</el-dropdown-item
-                  >
+                  <el-dropdown-item command="walletTopUp">钱包充值</el-dropdown-item>
+                  <el-dropdown-item command="kycInfo">kyc认证信息</el-dropdown-item>
+                  <el-dropdown-item command="cardList">持有银行卡</el-dropdown-item>
+                  <el-dropdown-item command="applyList">开卡申请记录</el-dropdown-item>
+                  <el-dropdown-item command="topupList">银行卡充值记录</el-dropdown-item>
+                  <el-dropdown-item command="consumeList">银行卡消费记录</el-dropdown-item>
+                  <el-dropdown-item command="walletList">钱包交易记录</el-dropdown-item>
+                  <el-dropdown-item command="holderList">持卡人信息</el-dropdown-item>
+                  <!-- <el-dropdown-item command="bindChannel">绑定渠道商</el-dropdown-item> -->
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="queryParams.pageNumber"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
+        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNumber"
+          :limit.sync="queryParams.pageSize" @pagination="getList" />
       </div>
     </div>
 
-    <el-dialog
-      title="kyc认证信息"
-      :visible.sync="kycDialogOpen"
-      width="50%"
-      :close-on-click-modal="false"
-      @close="closeKycInfo"
-      append-to-body
-    >
+    <el-dialog title="kyc认证信息" :visible.sync="kycDialogOpen" width="50%" :close-on-click-modal="false"
+      @close="closeKycInfo" append-to-body>
       <el-form ref="kycData" label-width="100px">
         <el-row>
-          <el-col
-            :span="8"
-            v-for="(value, index) in kycData"
-            :key="value.id || index"
-          >
-            <div
-              style="
+          <el-col :span="8" v-for="(value, index) in kycData" :key="value.id || index">
+            <div style="
                 width: 100%;
                 height: 180px;
                 overflow: hidden;
                 cursor: pointer;
-              "
-            >
-              <img
-                :src="value.documentFileUrl"
-                alt="图片"
-                style="width: 100%; height: 100%; object-fit: contain"
-              />
+              ">
+              <img :src="value.documentFileUrl" alt="图片" style="width: 100%; height: 100%; object-fit: contain" />
             </div>
           </el-col>
         </el-row>
       </el-form>
     </el-dialog>
 
-    <el-dialog
-      title="持有银行卡"
-      :visible.sync="cardDialogOpen"
-      width="70%"
-      :close-on-click-modal="false"
-      @close="closeCardList"
-      append-to-body
-    >
+    <el-dialog title="持有银行卡" :visible.sync="cardDialogOpen" width="70%" :close-on-click-modal="false"
+      @close="closeCardList" append-to-body>
       <el-table :data="cardList" max-height="600" v-loading="loading">
         <el-table-column label="序号" type="index" width="50" align="center" />
         <el-table-column label="银行卡" align="center" width="150">
           <template slot-scope="scope">
-            <div
-              style="
+            <div style="
                 width: 90%;
                 height: 80px;
                 overflow: hidden;
                 cursor: pointer;
-              "
-            >
-              <img
-                :src="scope.row.cardData.img"
-                alt="图片"
-                style="width: 100%; height: 100%; object-fit: contain"
-              />
+              ">
+              <img :src="scope.row.cardData.img" alt="图片" style="width: 100%; height: 100%; object-fit: contain" />
             </div>
           </template>
         </el-table-column>
@@ -283,44 +116,27 @@
         </el-table-column>
         <el-table-column label="卡类型" align="center" prop="cardType" />
         <el-table-column label="银行卡号" align="center" prop="cardNo" />
-        <el-table-column label="银行卡状态" align="center" prop="status" />
+        <el-table-column label="银行卡状态" align="center" prop="statusName" />
         <el-table-column label="银行卡余额" align="center" prop="balance" />
         <el-table-column label="申请时间" align="center" prop="setTime" />
       </el-table>
-      <pagination
-        v-show="cardTotal > 0"
-        :total="cardTotal"
-        :page.sync="cardQueryParams.pageNumber"
-        :limit.sync="cardQueryParams.pageSize"
-        @pagination="getCardList"
-      />
+      <pagination v-show="cardTotal > 0" :total="cardTotal" :page.sync="cardQueryParams.pageNumber"
+        :limit.sync="cardQueryParams.pageSize" @pagination="getCardList" />
     </el-dialog>
 
-    <el-dialog
-      title="开卡申请记录"
-      :visible.sync="applyListDialogOpen"
-      width="80%"
-      :close-on-click-modal="false"
-      @close="closeApplyList"
-      append-to-body
-    >
+    <el-dialog title="开卡申请记录" :visible.sync="applyListDialogOpen" width="80%" :close-on-click-modal="false"
+      @close="closeApplyList" append-to-body>
       <el-table :data="applyList" max-height="600" v-loading="loading">
         <el-table-column label="序号" type="index" width="50" align="center" />
         <el-table-column label="银行卡" align="center" width="150">
           <template slot-scope="scope">
-            <div
-              style="
+            <div style="
                 width: 90%;
                 height: 80px;
                 overflow: hidden;
                 cursor: pointer;
-              "
-            >
-              <img
-                :src="scope.row.cardData.img"
-                alt="图片"
-                style="width: 100%; height: 100%; object-fit: contain"
-              />
+              ">
+              <img :src="scope.row.cardData.img" alt="图片" style="width: 100%; height: 100%; object-fit: contain" />
             </div>
           </template>
         </el-table-column>
@@ -373,11 +189,7 @@
             <span v-else> 银行卡 </span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="kyc申请状态"
-          align="center"
-          prop="kycStateName"
-        />
+        <el-table-column label="kyc申请状态" align="center" prop="kycStateName" />
         <el-table-column label="发货状态" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.userCardData">
@@ -388,30 +200,15 @@
         <el-table-column label="状态" align="center" prop="applyStateName" />
         <el-table-column label="申请时间" align="center" prop="setTime" />
       </el-table>
-      <pagination
-        v-show="applyTotal > 0"
-        :total="applyTotal"
-        :page.sync="applyQueryParams.pageNumber"
-        :limit.sync="applyQueryParams.pageSize"
-        @pagination="getApplyList"
-      />
+      <pagination v-show="applyTotal > 0" :total="applyTotal" :page.sync="applyQueryParams.pageNumber"
+        :limit.sync="applyQueryParams.pageSize" @pagination="getApplyList" />
     </el-dialog>
 
-    <el-dialog
-      title="银行卡充值记录"
-      :visible.sync="topupDialogOpen"
-      width="70%"
-      :close-on-click-modal="false"
-      append-to-body
-    >
+    <el-dialog title="银行卡充值记录" :visible.sync="topupDialogOpen" width="70%" :close-on-click-modal="false" append-to-body>
       <el-table :data="topupList" max-height="600" v-loading="loading">
         <el-table-column label="序号" type="index" width="50" align="center" />
         <el-table-column label="充值用户" align="center" prop="userEmail" />
-        <el-table-column
-          label="订单编号"
-          align="center"
-          prop="requestOrderId"
-        />
+        <el-table-column label="订单编号" align="center" prop="requestOrderId" />
         <el-table-column label="充值银行卡" align="center">
           <template slot-scope="scope">
             <span>
@@ -427,11 +224,7 @@
           </template>
         </el-table-column>
         <el-table-column label="银行卡号" align="center" prop="cardNo" />
-        <el-table-column
-          label="充值手续费"
-          align="center"
-          prop="handlingFees"
-        />
+        <el-table-column label="充值手续费" align="center" prop="handlingFees" />
         <el-table-column label="充值金额" align="center">
           <template slot-scope="scope">
             <span>
@@ -441,31 +234,16 @@
         </el-table-column>
         <el-table-column label="充值时间" align="center" prop="setTime" />
       </el-table>
-      <pagination
-        v-show="topupTotal > 0"
-        :total="topupTotal"
-        :page.sync="topupQueryParams.pageNumber"
-        :limit.sync="topupQueryParams.pageSize"
-        @pagination="getConsumeList"
-      />
+      <pagination v-show="topupTotal > 0" :total="topupTotal" :page.sync="topupQueryParams.pageNumber"
+        :limit.sync="topupQueryParams.pageSize" @pagination="getConsumeList" />
     </el-dialog>
 
-    <el-dialog
-      title="银行卡消费记录"
-      :visible.sync="consumeDialogOpen"
-      width="70%"
-      :close-on-click-modal="false"
-      @close="closeConsumeList"
-      append-to-body
-    >
+    <el-dialog title="银行卡消费记录" :visible.sync="consumeDialogOpen" width="70%" :close-on-click-modal="false"
+      @close="closeConsumeList" append-to-body>
       <el-table :data="consumeList" max-height="600" v-loading="loading">
         <el-table-column label="序号" type="index" width="50" align="center" />
         <el-table-column label="消费用户" align="center" prop="userEmail" />
-        <el-table-column
-          label="订单编号"
-          align="center"
-          prop="requestOrderId"
-        />
+        <el-table-column label="订单编号" align="center" prop="requestOrderId" />
         <el-table-column label="消费银行卡" align="center">
           <template slot-scope="scope">
             <span>
@@ -481,11 +259,7 @@
           </template>
         </el-table-column>
         <el-table-column label="银行卡号" align="center" prop="cardNo" />
-        <el-table-column
-          label="消费手续费"
-          align="center"
-          prop="handlingFees"
-        />
+        <el-table-column label="消费手续费" align="center" prop="handlingFees" />
         <el-table-column label="消费金额" align="center">
           <template slot-scope="scope">
             <span>
@@ -495,23 +269,12 @@
         </el-table-column>
         <el-table-column label="消费时间" align="center" prop="setTime" />
       </el-table>
-      <pagination
-        v-show="consumeTotal > 0"
-        :total="consumeTotal"
-        :page.sync="consumeQueryParams.pageNumber"
-        :limit.sync="consumeQueryParams.pageSize"
-        @pagination="getConsumeList"
-      />
+      <pagination v-show="consumeTotal > 0" :total="consumeTotal" :page.sync="consumeQueryParams.pageNumber"
+        :limit.sync="consumeQueryParams.pageSize" @pagination="getConsumeList" />
     </el-dialog>
 
-    <el-dialog
-      title="钱包交易记录"
-      :visible.sync="walletDialogOpen"
-      width="70%"
-      :close-on-click-modal="false"
-      @close="closeWalletList"
-      append-to-body
-    >
+    <el-dialog title="钱包交易记录" :visible.sync="walletDialogOpen" width="70%" :close-on-click-modal="false"
+      @close="closeWalletList" append-to-body>
       <el-table :data="walletList" max-height="600" v-loading="loading">
         <el-table-column label="序号" type="index" width="50" align="center" />
         <el-table-column label="交易用户" align="center" prop="userEmail" />
@@ -548,33 +311,18 @@
         </el-table-column>
         <el-table-column label="交易时间" align="center" prop="setTime" />
       </el-table>
-      <pagination
-        v-show="walletTotal > 0"
-        :total="walletTotal"
-        :page.sync="walletQueryParams.pageNumber"
-        :limit.sync="walletQueryParams.pageSize"
-        @pagination="getwalletList"
-      />
+      <pagination v-show="walletTotal > 0" :total="walletTotal" :page.sync="walletQueryParams.pageNumber"
+        :limit.sync="walletQueryParams.pageSize" @pagination="getwalletList" />
     </el-dialog>
 
-    <el-dialog
-      title="持卡人信息"
-      :visible.sync="holderDialogOpen"
-      width="70%"
-      :close-on-click-modal="false"
-      @close="closeHoldertList"
-      append-to-body
-    >
+    <el-dialog title="持卡人信息" :visible.sync="holderDialogOpen" width="70%" :close-on-click-modal="false"
+      @close="closeHoldertList" append-to-body>
       <el-table :data="holderList" max-height="600" v-loading="loading">
         <el-table-column label="序号" type="index" width="50" align="center" />
         <el-table-column label="英文名" align="center" prop="userName" />
         <el-table-column label="英文姓" align="center" prop="userSurname" />
         <el-table-column label="国家代码" align="center" prop="userTelCode" />
-        <el-table-column
-          label="手机号代码"
-          align="center"
-          prop="userTelDialCode"
-        />
+        <el-table-column label="手机号代码" align="center" prop="userTelDialCode" />
         <el-table-column label="手机号" align="center" prop="userTel" />
         <el-table-column label="邮箱" align="center" prop="userEmail" />
         <el-table-column label="证件号" align="center" prop="userNumber" />
@@ -587,77 +335,24 @@
           :limit.sync="holderQueryParams.pageSize" @pagination="getHolderList" /> -->
     </el-dialog>
 
-    <el-dialog
-      title="钱包充值"
-      :visible.sync="walletTopUpdialogOpen"
-      width="30%"
-      :close-on-click-modal="false"
-      @close="walletTopUpdialogClose"
-      append-to-body
-    >
-      <el-form
-        ref="walletTopUpformData"
-        :model="walletTopUpformData"
-        :rules="rules"
-        label-width="100px"
-      >
+    <el-dialog title="钱包充值" :visible.sync="walletTopUpdialogOpen" width="30%" :close-on-click-modal="false"
+      @close="walletTopUpdialogClose" append-to-body>
+      <el-form ref="walletTopUpformData" :model="walletTopUpformData" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="充值金额" prop="topupAmount">
-              <el-input
-                type="number"
-                v-model="walletTopUpformData.topupAmount"
-                placeholder="请输入充值金额"
-              />
+              <el-input type="number" v-model="walletTopUpformData.topupAmount" placeholder="请输入充值金额" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="walletTopUpSubmit" v-debounce
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="walletTopUpSubmit" v-debounce>确 定</el-button>
         <el-button @click="walletTopUpdialogClose">取 消</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog
-      title="绑定渠道商"
-      :visible.sync="bindVisible"
-      width="30%"
-      :close-on-click-modal="false"
-      @close="bindClose"
-      append-to-body
-    >
-      <el-form
-        ref="bindRef"
-        :model="bindParams"
-        :rules="rules"
-        label-width="100px"
-      >
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="渠道商" prop="inviterUser">
-              <el-select v-model="bindParams.inviterUser">
-                <el-option
-                  v-for="item in channelList"
-                  :key="item.userId"
-                  :value="item.userId"
-                  :label="item.channelName"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="bindSubmit" v-debounce
-          >确 定</el-button
-        >
-        <el-button @click="bindClose">取 消</el-button>
-      </div>
-    </el-dialog>
+   
   </div>
 </template>
 
@@ -672,7 +367,6 @@ import {
 import { findUserCardList, findTransaction } from "@/api/userCard/userCard";
 import { openCardApplyList } from "@/api/applyCard/applyCard";
 import { findWalletLogn, walletTopUp } from "@/api/wallet/wallet";
-import { getChannelList, bindChannel } from "@/api/channel/index";
 export default {
   name: "typesOfPoints",
 
@@ -702,10 +396,8 @@ export default {
       cardList: [],
       cardTotal: 0,
       uid: null,
-      bindVisible: false,
       bindRef: null,
       channelList: {},
-      bindParams: {},
       cardQueryParams: {
         pageNumber: 1,
         pageSize: 10,
@@ -774,9 +466,7 @@ export default {
     this.getUserStateList();
     this.getKycStateList();
     this.getList();
-    getChannelList().then((res) => {
-      this.channelList = res.data;
-    });
+
   },
   methods: {
     //kyc认证状态
@@ -841,7 +531,7 @@ export default {
           this.getList();
           this.$modal.msgSuccess("操作成功过");
         })
-        .catch(() => {});
+        .catch(() => { });
     },
 
     //kyc认证信息
@@ -990,29 +680,6 @@ export default {
         }
       });
     },
-
-    openBind(row) {
-      this.bindVisible = true;
-      this.bindParams.coverInviterUser = row.userEmail;
-    },
-    bindClose() {
-      this.bindParams = {};
-      this.bindVisible = false;
-      this.resetForm("bindRef");
-    },
-    bindSubmit() {
-      this.$refs["bindRef"].validate((valid) => {
-        if (valid) {
-          console.log(this.bindParams);
-          bindChannel(this.bindParams).then((res) => {
-            this.$modal.msgSuccess(res.msg);
-            this.bindClose();
-            this.getList()
-          });
-        }
-      });
-    },
-
     // 更多操作触发
     handleCommand(command, row) {
       switch (command) {
