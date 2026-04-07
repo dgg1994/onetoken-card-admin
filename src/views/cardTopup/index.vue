@@ -23,22 +23,10 @@
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
           <el-table-column label="序号" type="index" width="50" align="center" />
-          <el-table-column label="充值用户" align="center" prop="userEmail" />
+          <el-table-column label="用户UID" align="center" prop="uid" />
+          <el-table-column label="用户邮箱" align="center" prop="userEmail" />
           <el-table-column label="订单编号" align="center" prop="requestOrderId" />
-          <el-table-column label="充值银行卡" align="center">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.cardData.title}}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column label="银行卡类型" align="center">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.cardData.bankCardNature}}
-              </span>
-            </template>
-          </el-table-column>
+          <el-table-column label="银行卡类型" align="center" prop="cardType" />
           <el-table-column label="银行卡号" align="center" prop="cardNo" />
           <el-table-column label="充值手续费" align="center" prop="handlingFees" />
           <el-table-column label="充值金额" align="center">
@@ -48,6 +36,7 @@
               </span>
             </template>
           </el-table-column>
+          <el-table-column label="充值状态" align="center" prop="orderStateName" />
           <el-table-column label="充值时间" align="center" prop="setTime" />
         </el-table>
         <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNumber"
@@ -93,7 +82,7 @@ export default {
     //交易列表
     getList() {
       this.loading = true;
-      this.queryParams.transType = "topup"
+      this.queryParams.transType = "TOPUP"
       findTransaction(this.queryParams).then(res => {
         this.dataList = res.data.list
         this.total = res.data.total

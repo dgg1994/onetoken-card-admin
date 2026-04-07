@@ -3,7 +3,7 @@ import request from '@/utils/request'
 //交易列表
 export function findTransaction(data) {
     return request({
-        url: 'appUserCard/findTransaction',
+        url: 'appUserCard/pcFindTransaction',
         method: 'post',
         data
     })
