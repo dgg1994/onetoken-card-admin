@@ -1,0 +1,149 @@
+<template>
+  <div class="mainBox">
+    <div class="app-container">
+      <div class="conetntBox">
+        <div class="flex_sb">
+          <el-form :model="queryParams" size="small" :inline="true" label-width="68px">
+
+            <el-form-item label="" prop="requestOrderId">
+               <el-date-picker
+                v-model="timeData"
+                type="daterange"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+              </el-date-picker>
+            </el-form-item>
+            
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+              <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+
+        </div>
+        <el-table :data="dataList" max-height="600" v-loading="loading">
+          <el-table-column label="序号" type="index" width="50" align="center" />
+          <el-table-column label="订单号" align="center" prop="orderNo" />
+          <el-table-column label="账户到账金额" align="center" prop="amount" />
+          <el-table-column label="货币数量" align="center" prop="coinAmount" />
+          <el-table-column label="结算货币" align="center" prop="currency" />
+          <el-table-column label="结算金额" align="center" prop="receiveAmount" />
+          <el-table-column label="状态" align="center" prop="status" />
+          <el-table-column label="充值时间" align="center" prop="setTime" />
+        </el-table>
+        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNumber"
+          :limit.sync="queryParams.pageSize" @pagination="getList" />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { rechargeHistoryList} from "@/api/wallet/wallet";
+
+export default {
+  name: "typesOfPoints",
+
+  data() {
+    return {
+      // 总条数
+      total: 0,
+      // 用户表格数据
+      dataList: null,
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
+      dialogOpen: false,
+      loading: true,
+      formData: {},
+      timeData:[],
+      upState: false,
+      // 查询参数
+      queryParams: {
+        pageNumber: 1,
+        pageSize: 10,
+      },
+    };
+  },
+  watch: {
+  },
+  created() {
+    this.getList();
+  },
+  methods: {
+
+    //交易列表
+    getList() {
+      this.loading = true;
+      if(this.timeData.length > 0){
+        this.queryParams.begTime = this.timeData[0]
+        this.queryParams.endTime = this.timeData[1]
+      }
+      rechargeHistoryList(this.queryParams).then(res => {
+        this.dataList = res.data.list
+        this.total = res.data.total
+        this.loading = false
+      })
+
+    },
+    // 取消按钮
+    cancel() {
+      this.dialogOpen = false;
+      this.upState = false
+      this.reset();
+    },
+
+    handleClose() {
+      this.dialogOpen = false;
+      this.upState = false
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.timeData=[]
+      this.formData = {};
+      this.resetForm("form");
+    },
+    resetQuery() {
+      this.timeData=[]
+      this.queryParams = {}
+      this.getList();
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.pageNumber = 1;
+      this.getList();
+    },
+
+
+  }
+};
+</script>
+<style>
+.mainBox {
+  height: calc(100vh - 84px);
+  overflow-y: auto;
+  background-color: #efefef;
+
+}
+
+.flex_sb {
+  display: flex;
+  justify-content: space-between;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.conetntBox {
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 20px;
+}
+</style>
