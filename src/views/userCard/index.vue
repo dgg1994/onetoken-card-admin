@@ -5,7 +5,7 @@
         <div class="flex_sb">
           <el-form :model="queryParams" size="small" :inline="true" label-width="68px">
             <el-form-item label="" prop="status">
-              <el-select v-model="queryParams.status" filterable placeholder="请选择银行卡激活状态" :disabled="upState"
+              <el-select v-model="queryParams.status" filterable placeholder="请选择银行卡状态" :disabled="upState"
                 style="width: 100%;">
                 <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
@@ -42,58 +42,43 @@
               <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
               <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
             </el-form-item>
-           
           </el-form>
-           <!-- <el-row :gutter="10" class="mb8">
-            <el-col :span="1.5">
-              <el-button type="primary" icon="el-icon-plus" @click="handleAdd">添加</el-button>
-            </el-col>
-          </el-row> -->
-          
         </div>
+
+
         <el-table :data="dataList" max-height="600" v-loading="loading">
           <el-table-column label="序号" type="index" width="50" align="center" />
-          <el-table-column label="持卡人" align="center">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.manData.userName+scope.row.manData.userSurname }}
-              </span>
-            </template>
+          <el-table-column label="用户uid" align="center" prop="uid" />
+          <el-table-column label="用户邮箱" align="center" prop="accountData.userEmail" />
+          <el-table-column label="持卡人英文名" align="center" prop="manData.userName" />
+          <el-table-column label="持卡人姓氏" align="center" prop="manData.userSurname" />
+          <el-table-column label="持卡人手机号" align="center" prop="manData.userTel" />
+          <el-table-column label="银行卡号" align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.cardNo">
+                  {{ scope.row.cardNo}}
+                </span>
+                <span v-else>
+                  --
+                </span>
+              </template>
           </el-table-column>
-          <el-table-column label="邮箱" align="center" prop="manData.userEmail" />
-          <el-table-column label="手机号" align="center">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.manData.userTelDialCode+scope.row.manData.userTel }}
-              </span>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column label="性别" align="center" prop="manData.userSex" />
-          <el-table-column label="生日" align="center" prop="manData.userBirthday" /> -->
-          <el-table-column label="银行卡号" align="center" prop="cardNo" />
           <el-table-column label="银行卡类型" align="center" prop="cardType" />
-          <el-table-column label="银行卡余额" align="center" prop="balance" />
-          <el-table-column label="银行卡状态" align="center">
-            <template slot-scope="scope">
-              <span v-if="scope.row.status == 'ACTIVE'">
-                已激活
-              </span>
-              <span v-else-if="scope.row.status == 'CLOSE_PROCESSING'">
-                注销审核中
-              </span>
-              <span v-else-if="scope.row.status == 'CLOSE'">
-                注销成功
-              </span>
-              <span v-else>
-                未激活
-              </span>
-            </template>
+          <el-table-column label="银行卡余额" align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.balance">
+                  {{ scope.row.balance}}
+                </span>
+                <span v-else>
+                  --
+                </span>
+              </template>
           </el-table-column>
-          <el-table-column label="实体发货状态" align="center" prop="shippingStateName" />
-          <el-table-column label="物流单号" align="center" prop="logisticsNum" />
-
+          <el-table-column label="银行卡状态" align="center" prop="statusName"/>
+          <!-- <el-table-column label="实体发货状态" align="center" prop="shippingStateName" />
+          <el-table-column label="物流单号" align="center" prop="logisticsNum" /> -->
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-            <template slot-scope="scope" v-if="scope.row.status == 'ACTIVE'">
+            <template slot-scope="scope" v-if="scope.row.status == 3">
               <el-button size="mini" type="text"  @click="topuUp(scope.row)">充值</el-button>
               <el-button size="mini" type="text"  @click="topupListOpen(scope.row)">充值记录</el-button>
             </template>
@@ -108,7 +93,7 @@
             <el-row>
               <el-col :span="24">
                 <el-form-item label="充值卡号" prop="cardNumber">
-                  <el-input type="number"  v-model="cardNumber" disabled />
+                  <el-input   v-model="cardNumber" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="24">
@@ -144,7 +129,7 @@
             <el-table-column label="序号" type="index" width="50" align="center" />
             <el-table-column label="充值用户" align="center" prop="userEmail" />
             <el-table-column label="订单编号" align="center" prop="requestOrderId" />
-            <el-table-column label="充值银行卡" align="center">
+            <!-- <el-table-column label="充值银行卡" align="center">
               <template slot-scope="scope">
                 <span>
                   {{ scope.row.cardData.title}}
@@ -157,7 +142,7 @@
                   {{ scope.row.cardData.bankCardNature}}
                 </span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column label="银行卡号" align="center" prop="cardNo" />
             <el-table-column label="充值手续费" align="center" prop="handlingFees" />
             <el-table-column label="充值金额" align="center">
@@ -183,7 +168,7 @@
 <script>
 import { pcFindUserCardList,findTransaction} from "@/api/userCard/userCard";
 import { cardTopUp} from "@/api/applyCard/applyCard";
-
+import { findCardState} from "@/api/dic/dic";
 export default {
   name: "typesOfPoints",
  
@@ -206,25 +191,8 @@ export default {
         pageNumber: 1,
         pageSize: 10,
       },
-      statusList: [
-        {
-          "id":"ACTIVE",
-          "name":"已激活"
-        },
-        {
-          "id":"TBA",
-          "name":"未激活"
-        },
-        {
-          "id":"CLOSE_PROCESSING",
-          "name":"注销审核中"
-        },
-        {
-          "id":"CLOSE",
-          "name":"注销成功"
-        }
-      ],
-       cardTypeList:[
+      statusList: [],
+      cardTypeList:[
         {
           "id":"PHYSICAL",
           "name":"实体卡"
@@ -270,12 +238,19 @@ export default {
   },
   created() {
     this.userInfo = this.$store.state.user.userInfo;
+    this.getCardState();
     this.getList();
   },
   methods: {
+
+    getCardState(){
+      findCardState().then(res => {
+        this.statusList = res.data
+      })
+    },
+
     getList() {
       this.loading = true;
-      console.log(this.q)
       pcFindUserCardList(this.queryParams).then(res => {
         this.dataList = res.data.list
         this.total = res.data.total
@@ -312,14 +287,18 @@ export default {
     /** 充值按钮操作 */
     topuUp(row) {
       this.reset();
+      console.log(row)
       this.cardNumber = row.cardNo
       this.cardData = row.cardData
+            console.log(this.cardData)
+
       this.userCard = row
       this.dialogOpen = true;
       this.title = "充值";
     },
 
     handleAmountChange(value){
+      console.log(this.cardData)
       this.formData.handlingFees = value * this.cardData.rechargeFee
     },
 

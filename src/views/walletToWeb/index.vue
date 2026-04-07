@@ -44,10 +44,10 @@
           <el-table-column label="实际到账" align="center" prop="realAmount" />
           <el-table-column label="提现状态" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.applyState === '1'">
+              <span v-if="scope.row.applyState === 1">
                 完成
               </span>
-              <span v-else-if="scope.row.applyState === '2'">
+              <span v-else-if="scope.row.applyState === 2">
                 失败
               </span>
                <span v-else>

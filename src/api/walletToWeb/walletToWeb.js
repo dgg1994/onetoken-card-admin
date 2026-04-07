@@ -8,3 +8,26 @@ export function walletToWebLogList(data) {
     })
 }
 
+
+export function walletToWebLogReject(id,rejectContent) {
+    return request({
+        url: 'walletToWebLog/reject',
+        method: 'get',
+        params: {
+            id,
+            rejectContent
+        }
+    })
+}
+
+export function walletToWebLogPass(id) {
+    return request({
+        url: 'walletToWebLog/pass',
+        method: 'get',
+        params: {
+            id
+        }
+    })
+}
+
+

@@ -44,10 +44,10 @@
           <el-table-column label="实际到账" align="center" prop="realAmount" />
           <el-table-column label="提现状态" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.applyState === '1'">
+              <span v-if="scope.row.applyState === 1">
                 完成
               </span>
-              <span v-else-if="scope.row.applyState === '2'">
+              <span v-else-if="scope.row.applyState === 2">
                 失败
               </span>
                <span v-else>
@@ -59,7 +59,7 @@
            <el-table-column label="操作" align="center" width="160">
             <template slot-scope="scope">
               <el-button v-if="scope.row.applyState === 0" size="mini" type="text"
-                @click="topUp(scope.row)">审核通过</el-button>
+                @click="topUpSub(scope.row)">审核通过</el-button>
 
               <el-button v-if="scope.row.applyState === 0" size="mini" type="text"
                 @click="reject(scope.row)">审核拒绝</el-button>
@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { walletToWebLogList } from "@/api/walletToWeb/walletToWeb";
+import { walletToWebLogList,walletToWebLogReject,walletToWebLogPass } from "@/api/walletToWeb/walletToWeb";
 import { findNetwokList } from "@/api/dic/dic";
 export default {
   name: "typesOfPoints",
@@ -191,7 +191,7 @@ export default {
     },
 
     rejectSub() {
-       walletNetworkTopUpClose(this.rejectData.id,this.rejectData.reviewRemark).then(res => {
+       walletToWebLogReject(this.rejectData.id,this.rejectData.reviewRemark).then(res => {
           if (res.code == 200) {
             this.$modal.msgSuccess("驳回成功");
             this.rejectDialogOpen = false;
@@ -205,11 +205,10 @@ export default {
     },
 
   
-    topUpSub(){
+    topUpSub(row){
       this.$modal.confirm('是否确认审核通过？')
         .then(() => {
-          // 提交 kyc 认证申请
-          return kycApply(id);
+          return walletToWebLogPass(row.id);
         })
         .then(() => {
           // 提交成功后的处理
