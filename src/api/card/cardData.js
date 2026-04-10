@@ -55,3 +55,14 @@ export function cardCopyCard(uuid) {
         }
     })
 }
+
+export function upState(uuid,stateId) {
+    return request({
+        url: 'card/upState',
+        method: 'get',
+        params: {
+            'uuid': uuid,
+            'stateId': stateId
+        }
+    })
+}

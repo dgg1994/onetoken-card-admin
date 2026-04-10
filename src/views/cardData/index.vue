@@ -58,16 +58,14 @@
           <el-table-column label="激活/首充最低金额" align="center" prop="activeMinLimit" />
           <el-table-column label="每次非首充最低金额" align="center" prop="rechargeMinLimit" />
           <el-table-column label="每次非首充最高金额" align="center" prop="rechargeMaxLimit" />
-          <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-            <template slot-scope="scope" v-if="scope.row.roleId !== 1">
-               <el-button size="mini" type="text" @click="handleUpdate(scope.row)"></el-button>
-               <el-button size="mini" type="text" @click="imgUpdate(scope.row)">配置封面图</el-button>
-               <el-button size="mini" type="text" @click="imgListUpdate(scope.row)">配置列表图</el-button>
-              <el-button size="mini" type="text" @click="copyCard(scope.row)">复制卡片</el-button>
+          <el-table-column label="状态" align="center">
+            <template slot-scope="scope">
+             <span v-if="scope.row.cardState === 1" style="color: #67c23a;">上架中</span>
+             <span v-else style="color: #f56c6c;">未上架</span>
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column label="操作" align="center">
-            <template slot-scope="scope" v-if="scope.row.roleId !== 1">
+            <template slot-scope="scope">
               <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
                 <el-button size="mini" type="text" icon="el-icon-d-arrow-right">操作</el-button>
                 <el-dropdown-menu slot="dropdown">
@@ -75,6 +73,8 @@
                   <el-dropdown-item command="openImgUpdate" >配置封面图</el-dropdown-item>
                   <el-dropdown-item command="openImgListUpdate" >配置列表图</el-dropdown-item>
                   <el-dropdown-item command="openCopyCard" >复制卡片</el-dropdown-item>
+                  <el-dropdown-item command="down" v-if="scope.row.cardState === 1" >下架</el-dropdown-item>
+                  <el-dropdown-item command="superior" v-if="scope.row.cardState === 2" >上架</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -200,7 +200,7 @@
 
 <script>
 import { getLanguage} from "@/api/dic/dic";
-import { cardList,pullList,cardUpdate,cardUpdateImg,cardUpdateListImg,cardCopyCard} from "@/api/card/cardData";
+import { cardList,pullList,cardUpdate,cardUpdateImg,cardUpdateListImg,cardCopyCard,upState} from "@/api/card/cardData";
 import { cardTagFindAll} from "@/api/card/cardTag";
 import { cardSynopsisFindAll} from "@/api/card/cardSynopsis";
 import uploadImg from '@/components/uploadImg/uploadImg.vue'
@@ -300,7 +300,6 @@ export default {
 
     getSynopsisList(){
       cardSynopsisFindAll().then(res =>{
-        console.log(res)
         this.synopsisList = res.data
       })
     },
@@ -499,6 +498,17 @@ export default {
       });
     },
 
+    //上下架
+    upCardState(row,stateId){
+      console.log(row,stateId)
+      let msg = stateId === 1 ? '上架' : '下架'
+      this.$modal.confirm(`是否确认${msg}此卡片？`).then(function () {
+        return upState(row.uuid,stateId);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess(`${msg}成功`);
+      }).catch(() => { });
+    },
 
     // 更多操作触发
     handleCommand(command, row) {
@@ -514,6 +524,12 @@ export default {
           break;
         case "openCopyCard":
           this.copyCard(row);//复制卡片
+          break;
+        case "down":
+          this.upCardState(row,2);//下架
+          break;
+        case "superior":
+          this.upCardState(row,1);//上架
           break;
         default:
           break;
