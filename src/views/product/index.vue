@@ -210,6 +210,7 @@
 </template>
 
 <script>
+import { getLanguage } from "@/api/dic/dic";
 import { productList, productTypeAll, productAdd, productUpdate, productOnAndOff, productDelete, productDetail, uploadCommonFile } from "@/api/product/product";
 
 export default {
@@ -248,10 +249,7 @@ export default {
         productType: undefined,
         status: undefined
       },
-      languageList: [
-        { name: "zh", value: "中文" },
-        { name: "en", value: "English" }
-      ],
+      languageList: [],
       whetherCurrent:1,
       whetherCurrentList: [
         {
@@ -311,10 +309,16 @@ export default {
   watch: {
   },
   created() {
+    this.getLanguageList();
     this.getProductTypeAll()
     this.getList();
   },
   methods: {
+    getLanguageList() {
+      getLanguage().then(res => {
+        this.languageList = res.data || [];
+      })
+    },
     getProductTypeAll() {
       productTypeAll({
         pageNumber: 1,

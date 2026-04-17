@@ -15,8 +15,8 @@
             </el-form-item>
             <el-form-item label="" prop="orderState">
               <el-select v-model="queryParams.orderState" filterable placeholder="请选择订单状态" clearable style="width: 150px;">
-                <el-option label="进行中" value="active"></el-option>
-                <el-option label="已完成" value="completed"></el-option>
+                <el-option label="持有中" value="active"></el-option>
+                <el-option label="已赎回" value="redeemed"></el-option>
                 <el-option label="已到期" value="expired"></el-option>
               </el-select>
             </el-form-item>
@@ -81,10 +81,10 @@
           <el-table-column label="订单状态" align="center">
             <template slot-scope="scope">
               <span v-if="scope.row.orderState === 'active'">
-                进行中
+                持有中
               </span>
-              <span v-else-if="scope.row.orderState === 'completed'">
-                已完成
+              <span v-else-if="scope.row.orderState === 'redeemed'">
+                已赎回
               </span>
               <span v-else-if="scope.row.orderState === 'expired'">
                 已到期
@@ -106,6 +106,7 @@
 </template>
 
 <script>
+import { getLanguage } from "@/api/dic/dic";
 import { productOrderList} from "@/api/product/product";
 
 export default {
@@ -125,10 +126,12 @@ export default {
       formData: {},
       upState: false,
       setTimeRange: [],
+      languageList: [],
       // 查询参数
       queryParams: {
         pageNumber: 1,
         pageSize: 10,
+        language: '',
         orderNum: '',
         orderState: '',
         productType: '',
@@ -140,12 +143,19 @@ export default {
   watch: {
   },
   created() {
+    this.getLanguageList();
     this.getList();
   },
   methods: {
+    getLanguageList() {
+      getLanguage().then(res => {
+        this.languageList = res.data || [];
+      })
+    },
 
     buildProductListPayload() {
       const p = { ...this.queryParams };
+      if (p.language === "" || p.language == null) delete p.language;
       if (p.orderNum === "" || p.orderNum == null) delete p.orderNum;
       if (p.orderState === "" || p.orderState == null) delete p.orderState;
       if (p.productType === "" || p.productType == null) delete p.productType;
@@ -191,6 +201,7 @@ export default {
       this.queryParams = {
         pageNumber: 1,
         pageSize: 10,
+        language: '',
         orderNum: '',
         orderState: '',
         productType: '',
