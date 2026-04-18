@@ -35,6 +35,7 @@
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
           <el-table-column label="序号" type="index" width="50" align="center" />
+          <el-table-column label="用户uid" align="center" prop="uid" />
           <el-table-column label="银行卡" align="center" width="150">
             <template slot-scope="scope">
               <div style="width: 90%; height: 80px; overflow: hidden; cursor: pointer;">

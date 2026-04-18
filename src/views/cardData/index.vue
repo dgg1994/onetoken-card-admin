@@ -47,8 +47,8 @@
           </el-table-column>
           <el-table-column label="卡片名称" align="center" prop="title" />
           <el-table-column label="卡片性质" align="center" prop="bankCardNature" />
-          <!-- <el-table-column label="银行卡来源" align="center" prop="bankCardSource" />
-          <el-table-column label="卡片类型" align="center" prop="bankCardType" /> -->
+          <!-- <el-table-column label="银行卡来源" align="center" prop="bankCardSource" /> -->
+          <el-table-column label="卡片类型" align="center" prop="bankCardType" />
           <el-table-column label="卡币种" align="center" prop="ccy" />
           <el-table-column label="月费" align="center" prop="monthFee" />
           <el-table-column label="卡号段" align="center" prop="cardBin" />

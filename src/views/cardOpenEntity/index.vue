@@ -35,6 +35,7 @@
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
           <el-table-column label="序号" type="index" width="50" align="center" />
+          <el-table-column label="用户uid" align="center" prop="uid" />
           <el-table-column label="银行卡" align="center" width="150">
             <template slot-scope="scope">
               <div style="width: 90%; height: 80px; overflow: hidden; cursor: pointer;">
@@ -82,6 +83,7 @@
           <el-table-column label="月费" align="center" prop="monthFee" />
           <el-table-column label="开卡费用" align="center" prop="openCardCost" />
           <el-table-column label="预存费用" align="center" prop="preSaveCost" />
+          <el-table-column label="邮费" align="center" prop="logisticsMonery" />
           <el-table-column label="总费用" align="center" prop="openCardTotal" />
           <el-table-column label="充值方式" align="center">
             <template slot-scope="scope">
@@ -103,7 +105,7 @@
                 @click="kycApply(scope.row.id)">kyc认证</el-button>
 
               <el-button v-if="scope.row.kycState === 3  && scope.row.applyState === 1 && scope.row.shippingState === 1" 
-                @click="openShipping(scope.row.id)" size="mini" type="text">发货</el-button>
+                @click="openShipping(scope.row)" size="mini" type="text">发货</el-button>
 
               <el-button v-if="scope.row.applyState === 1  && scope.row.shippingState === 1" size="mini" type="text"
                 @click="reject(scope.row)">驳回申请</el-button>
@@ -255,6 +257,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
+            <el-form-item label="邮费" prop="logisticsMonery">
+              <el-input v-model="formData.logisticsMonery" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="开卡总费用" prop="openCardTotal">
               <el-input v-model="formData.openCardTotal" :disabled="true" />
             </el-form-item>
@@ -344,7 +351,7 @@
             kyc认证
         </el-button>
         <el-button v-if="formData.kycState === 3 && formData.applyState === 1 && formData.shippingState === 1" 
-                @click="openShipping(formData.id)" type="primary">
+                @click="openShipping(formData)" type="primary">
               发货
         </el-button>
 
@@ -616,8 +623,10 @@ export default {
     },
 
     //发货弹窗
-    openShipping(id){
-      this.applyId = id;
+    openShipping(row){
+      console.log(row)
+      this.applyId = row.id;
+      this.ShippingData.logisticsMonery = row.logisticsMonery
       this.shippingDialogOpen = true
     },
 
