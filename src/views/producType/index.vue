@@ -29,6 +29,7 @@
           </el-row>
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
+          <el-table-column label="序号" type="index" width="50" align="center" />
           <el-table-column label="语言" align="center" prop="language" />
           <el-table-column label="类型名称" align="center" prop="title" />
           <el-table-column label="产品类型" align="center">

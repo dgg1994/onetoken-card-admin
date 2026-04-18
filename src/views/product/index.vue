@@ -58,6 +58,7 @@
           </el-row>
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
+          <el-table-column label="序号" type="index" width="50" align="center" />
           <el-table-column label="产品图" align="center" width="180">
             <template slot-scope="scope">
               <div style="width: 90%; height: 80px; overflow: hidden; cursor: pointer;">
@@ -121,87 +122,107 @@
           :limit.sync="queryParams.pageSize" @pagination="getList" />
 
 
-        <!-- 添加或修改用户配置对话框 -->
-        <el-dialog :title="title" :visible.sync="dialogOpen" width="50%" :close-on-click-modal="false"
-          @close="handleClose" append-to-body>
-          <el-form ref="formData" :model="formData" :rules="rules" label-width="100px">
-            <el-row>
+        <!-- 添加或修改：financeBase + 多语言 Tab -->
+        <el-dialog :title="title" :visible.sync="dialogOpen" width="720px" :close-on-click-modal="false"
+          @close="handleClose" append-to-body class="product-dialog">
+          <el-form ref="formData" :model="formData" :rules="rules" label-width="108px">
+            <div class="form-section-title">基础信息</div>
+            <el-row :gutter="16">
               <el-col :span="24">
-                <el-form-item label="产品图" prop="logoURL">
+                <el-form-item label="产品图">
                   <uploadImg :value="logoURL" @input="handleLogoInput" :limit="1"></uploadImg>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="语言" prop="language">
-                  <el-select v-model="formData.language" filterable placeholder="请选择语言" :disabled="upState"
-                    style="width: 100%;">
-                    <el-option v-for="item in languageList" :key="item.name" :label="item.value" :value="item.name">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <!-- <el-col :span="12">
-                <el-form-item label="是否活期" prop="whetherCurrent">
-                  <el-select v-model="formData.whetherCurrent" filterable placeholder="是否活期产品"
-                    style="width: 100%;">
-                    <el-option v-for="item in whetherCurrentList" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col> -->
-              <el-col :span="12">
-                <el-form-item label="产品名称" prop="productName">
-                  <el-input v-model="formData.productName" placeholder="请输入产品名称" />
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="12">
-                <el-form-item label="产品类型" prop="productType">
-                  <el-select v-model="formData.productType" filterable placeholder="请选择产品类型" style="width: 100%;" @change="selectTypeList">
+                <el-form-item label="产品类型" prop="financeBase.productType">
+                  <el-select v-model="formData.financeBase.productType" filterable placeholder="请选择产品类型"
+                    style="width: 100%;" @change="selectTypeList">
                     <el-option v-for="item in productTypeList" :key="item.id" :label="item.title" :value="Number(item.productType)">
                     </el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
-
               <el-col :span="12">
-                <el-form-item label="资金类型" prop="fundsType">
-                  <el-input v-model="formData.fundsType" placeholder="请输入资金类型" :disabled="true" />
+                <el-form-item label="类型名称">
+                  <el-input
+                    v-model="formData.financeBase.productTypeName"
+                    placeholder="选择产品类型后自动带出，全部语言共用"
+                    disabled
+                  />
                 </el-form-item>
               </el-col>
-
               <el-col :span="12">
-                <el-form-item label="理财时长" prop="productTime">
-                  <el-input :disabled="Number(formData.productType) === 2" type="number" v-model="formData.productTime" placeholder="请输入理财时长" style="width: 85%;" />
-                  <span>（天）</span>
+                <el-form-item label="资金类型" prop="financeBase.fundsType">
+                  <el-input v-model="formData.financeBase.fundsType" placeholder="资金类型" :disabled="true" />
                 </el-form-item>
               </el-col>
-
               <el-col :span="12">
-                <el-form-item label="起购金额" prop="initialMonery">
-                  <el-input type="number" v-model="formData.initialMonery" placeholder="请输入起购金额" style="width: 80%;" />
-                  <span>（USDT）</span>
+                <el-form-item label="理财时长" prop="financeBase.termDays">
+                  <el-input :disabled="Number(formData.financeBase.productType) === 2" type="number"
+                    v-model="formData.financeBase.termDays" placeholder="请输入理财时长" style="width: calc(100% - 52px);" />
+                  <span class="unit-suffix">（天）</span>
                 </el-form-item>
               </el-col>
-
               <el-col :span="12">
-                <el-form-item label="年利率" prop="interestRate">
-                  <el-input type="number" v-model="formData.interestRate" placeholder="请输入年利率" style="width: 85%;" />
-                  <span>（%）</span>
+                <el-form-item label="起购金额" prop="financeBase.minInvestment">
+                  <el-input type="number" v-model="formData.financeBase.minInvestment" placeholder="请输入起购金额"
+                    style="width: calc(100% - 56px);" />
+                  <div class="unit-hint">（USDT）</div>
                 </el-form-item>
               </el-col>
-
-              <el-col :span="24">
-                <el-form-item label="产品介绍" prop="productInfo">
-                  <el-input type="textarea" :rows="4" v-model="formData.productInfo" placeholder="请输入产品介绍" />
+              <el-col :span="12">
+                <el-form-item label="年利率" prop="financeBase.apyPercent">
+                  <el-input type="number" v-model="formData.financeBase.apyPercent" placeholder="请输入年利率"
+                    style="width: calc(100% - 44px);" />
+                  <span class="unit-suffix">（%）</span>
                 </el-form-item>
               </el-col>
-
+              <el-col :span="12">
+                <el-form-item label="产品状态" prop="financeBase.status">
+                  <el-select v-model="formData.financeBase.status" placeholder="状态" style="width: 100%;">
+                    <el-option v-for="item in productStateIdList" :key="item.id" :label="item.name" :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
             </el-row>
+
+            <el-divider content-position="left">多语言文案</el-divider>
+            <p class="locale-tab-hint">必填（至少填写一种语言的产品名称或介绍）</p>
+            <el-tabs v-model="activeLocaleTab" class="locale-tabs" v-if="dialogLangTabs.length">
+              <el-tab-pane
+                v-for="lang in dialogLangTabs"
+                :key="lang.name"
+                :label="lang.value"
+                :name="lang.name"
+              >
+                <el-row v-if="formData.localeByLang[lang.name]" :gutter="16" class="locale-tab-panel">
+                  <el-col :span="24">
+                    <el-form-item label="产品名称">
+                      <el-input
+                        v-model="formData.localeByLang[lang.name].name"
+                        placeholder="必填（至少填写一种语言）"
+                      />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="24">
+                    <el-form-item label="产品介绍">
+                      <el-input
+                        type="textarea"
+                        :rows="4"
+                        v-model="formData.localeByLang[lang.name].features"
+                        placeholder="请输入产品介绍"
+                      />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
+            </el-tabs>
+            <div v-else class="locale-empty-tip">暂无语言配置，请先维护字典语言列表</div>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="submitForm" v-debounce>确 定</el-button>
             <el-button @click="cancel">取 消</el-button>
+            <el-button type="primary" @click="submitForm" v-debounce>保 存</el-button>
           </div>
         </el-dialog>
       </div>
@@ -211,7 +232,7 @@
 
 <script>
 import { getLanguage } from "@/api/dic/dic";
-import { productList, productTypeAll, productAdd, productUpdate, productOnAndOff, productDelete, productDetail, uploadCommonFile } from "@/api/product/product";
+import { productList, productTypeListName, productAdd, productUpdate, productOnAndOff, productDelete, productDetail, uploadCommonFile } from "@/api/product/product";
 
 export default {
   name: "typesOfPoints",
@@ -228,9 +249,22 @@ export default {
       dialogOpen: false,
       loading: true,
       formData: {
-        "fundsType": "USDT",
-        "productTime":0
+        id: undefined,
+        financeBase: {
+          productType: undefined,
+          productTypeName: "",
+          fundsType: "USDT",
+          termDays: null,
+          minInvestment: undefined,
+          apyPercent: undefined,
+          status: 2
+        },
+        localeByLang: {}
       },
+      /** 多语言 Tab 当前语言 code，与 dic.name 一致 */
+      activeLocaleTab: "",
+      /** 弹窗内 Tab：字典语言 + 详情接口里出现但字典未配置的语言（如 en） */
+      dialogLangTabs: [],
       upState: false,
       logoURL: [],
       coverUploading: false,
@@ -264,44 +298,46 @@ export default {
       productStateIdList: [
         {
           "id": 1,
-          "name": "已上架"
+          "name": "上架"
         },
         {
           "id": 2,
-          "name": "已下架"
+          "name": "下架"
         }
       ],
-      // 表单校验
+      // 表单校验（多语言文案在 Tab 内，提交时单独校验「至少一种语言」）
       rules: {
-        language: [
-          { required: true, message: "请选择语言", trigger: "blur" },
+        "financeBase.productType": [
+          { required: true, message: "请选择产品类型", trigger: "change" },
         ],
-        // whetherCurrent: [
-        //   { required: true, message: "请选择是否是活期", trigger: "blur" },
-        // ],
-        name: [
-          { required: true, message: "请输入标签内容", trigger: "blur" },
-        ],
-        productName: [
-          { required: true, message: "请输入产品名称", trigger: "blur" },
-        ],
-        productInfo: [
-          { required: true, message: "请输入产品介绍", trigger: "blur" },
-        ],
-        productType: [
-          { required: true, message: "请选中产品类型", trigger: "blur" },
-        ],
-        fundsType: [
+        "financeBase.fundsType": [
           { required: true, message: "请输入资金类型", trigger: "blur" },
         ],
-        initialMonery: [
+        "financeBase.minInvestment": [
           { required: true, message: "请输入起购金额", trigger: "blur" },
         ],
-        productTime: [
-          { required: true, message: "请输入理财时长", trigger: "blur" },
-        ],
-        interestRate: [
+        "financeBase.apyPercent": [
           { required: true, message: "请输入年利率", trigger: "blur" },
+        ],
+        "financeBase.termDays": [
+          {
+            validator: (rule, value, callback) => {
+              const pt = Number(this.formData.financeBase.productType);
+              if (pt === 2) {
+                callback();
+                return;
+              }
+              if (value === "" || value == null || Number(value) <= 0) {
+                callback(new Error("请输入理财时长（天）"));
+                return;
+              }
+              callback();
+            },
+            trigger: "blur",
+          },
+        ],
+        "financeBase.status": [
+          { required: true, message: "请选择产品状态", trigger: "change" },
         ],
       },
     };
@@ -319,17 +355,94 @@ export default {
         this.languageList = res.data || [];
       })
     },
+    /** 查询区与弹窗产品类型下拉：GET productType/listName，列表结构与原 list 一致 */
     getProductTypeAll() {
-      productTypeAll({
-        pageNumber: 1,
-        pageSize: 100
-      }).then(res => {
-        const list = (res.data && res.data.list) || [];
-        this.productTypeList = list.filter(item => item.status === 1);
-      })
+      productTypeListName().then((res) => {
+        const raw = res.data;
+        const list = Array.isArray(raw) ? raw : (raw && raw.list) || [];
+        this.productTypeList = list.filter((item) => item.status === 1);
+      });
+    },
+    /** 统一比较语言 code：忽略大小写、下划线/连字符差异（zh_CN 与 zh-CN 视为同一语言） */
+    normalizeLangKey(code) {
+      if (code == null || code === "") return "";
+      return String(code).trim().replace(/_/g, "-").toLowerCase();
+    },
+    /**
+     * 将接口返回的 language 映射为字典里的 name（作为 Tab / localeByLang 的唯一键）
+     * 避免字典 zh_CN 与接口 zh-CN 各建一个 Tab，导致中文写在 zh-CN、界面却绑定 zh_CN 而不回显
+     */
+    resolveLocaleTabKey(apiLanguage) {
+      if (apiLanguage == null || apiLanguage === "") return "";
+      const n = this.normalizeLangKey(apiLanguage);
+      const list = this.languageList || [];
+      const match = list.find((l) => this.normalizeLangKey(l.name) === n);
+      return match ? match.name : String(apiLanguage).trim();
+    },
+    /** 弹窗 Tab：默认与字典一致 */
+    defaultDialogLangTabs() {
+      return (this.languageList || []).map((l) => ({
+        name: l.name,
+        value: l.value,
+      }));
+    },
+    /**
+     * 详情里出现的语言若不在字典里（如 en），追加 Tab；与字典同义（zh-CN/zh_CN）只保留字典那一项
+     */
+    syncDialogLanguageTabs(localeListFromApi) {
+      const dic = this.languageList || [];
+      const usedNorm = new Set();
+      const tabs = [];
+      dic.forEach((item) => {
+        usedNorm.add(this.normalizeLangKey(item.name));
+        tabs.push({ name: item.name, value: item.value });
+      });
+      (localeListFromApi || []).forEach((row) => {
+        const code = row.language;
+        if (!code) return;
+        const canon = this.resolveLocaleTabKey(code);
+        const norm = this.normalizeLangKey(canon);
+        if (usedNorm.has(norm)) return;
+        usedNorm.add(norm);
+        tabs.push({ name: canon, value: canon });
+      });
+      this.dialogLangTabs = tabs.length ? tabs : this.defaultDialogLangTabs();
+    },
+    /** 为当前 dialogLangTabs（或字典）初始化空文案 map */
+    buildEmptyLocaleMap() {
+      const map = {};
+      const tabs =
+        this.dialogLangTabs && this.dialogLangTabs.length
+          ? this.dialogLangTabs
+          : (this.languageList || []).map((l) => ({ name: l.name }));
+      tabs.forEach((t) => {
+        map[t.name] = {
+          name: "",
+          features: "",
+        };
+      });
+      return map;
+    },
+    /** 仅提交填写过名称或介绍的语种；与详情接口约定一致：locale 仅含 language、name、features */
+    buildLocalesPayload() {
+      const map = this.formData.localeByLang || {};
+      const out = [];
+      Object.keys(map).forEach((language) => {
+        const row = map[language];
+        const name = row.name != null ? String(row.name).trim() : "";
+        const features = row.features != null ? String(row.features).trim() : "";
+        if (name || features) {
+          out.push({
+            language,
+            name,
+            features
+          });
+        }
+      });
+      return out;
     },
     buildProductListPayload() {
-      const p = { ...this.queryParams };
+      const p = { ...this.queryParams, identity: true };
       if (p.name === "" || p.name == null) delete p.name;
       if (p.language === "" || p.language == null) delete p.language;
       if (p.productType === "" || p.productType == null) delete p.productType;
@@ -362,13 +475,16 @@ export default {
           this.loading = false;
         });
     },
-    selectTypeList(productType){
+    selectTypeList(productType) {
       const currentType = Number(productType);
-      let data = this.productTypeList.find(item => Number(item.productType) === currentType);
-      if (!data) return;
-      this.whetherCurrent = Number(data.productType) === 2 ? 1 : 2
-      if(this.whetherCurrent === 1){
-        this.formData.productTime = 0
+      const row = this.productTypeList.find(item => Number(item.productType) === currentType);
+      if (!row) return;
+      this.whetherCurrent = Number(row.productType) === 2 ? 1 : 2;
+      if (this.whetherCurrent === 1) {
+        this.formData.financeBase.termDays = null;
+      }
+      if (row.title) {
+        this.formData.financeBase.productTypeName = row.title;
       }
     },
     async handleLogoInput(val) {
@@ -414,12 +530,32 @@ export default {
       this.upState = false
       this.reset();
     },
+    /** 新建弹窗默认表单结构 */
+    emptyFormData() {
+      return {
+        id: undefined,
+        financeBase: {
+          productType: undefined,
+          productTypeName: "",
+          fundsType: "USDT",
+          termDays: null,
+          minInvestment: undefined,
+          apyPercent: undefined,
+          status: 2
+        },
+        localeByLang: {}
+      };
+    },
     // 表单重置
     reset() {
-      this.formData = {
-        "fundsType": "USDT"
-      };
-      this.resetForm("form");
+      this.dialogLangTabs = this.defaultDialogLangTabs();
+      this.formData = this.emptyFormData();
+      this.formData.localeByLang = this.buildEmptyLocaleMap();
+      this.activeLocaleTab =
+        (this.dialogLangTabs[0] && this.dialogLangTabs[0].name) ||
+        (this.languageList[0] && this.languageList[0].name) ||
+        "";
+      this.resetForm("formData");
     },
     resetQuery() {
       this.setTimeRange = [];
@@ -448,30 +584,114 @@ export default {
       this.title = "添加";
     },
 
-    /** 编辑按钮操作 */
+    /** 编辑：兼容详情 financeBase 混入分页字段、locales 含字典外 language */
     handleUpdate(row) {
       this.reset();
       this.loading = true;
       productDetail(row.id).then(res => {
-        const data = res.data;
-        this.formData = {
-          id: data.id,
-          language: data.language,
-          productName: data.name,
-          productType: data.productType,
-          fundsType: data.fundsType || "USDT",
-          productTime: data.termDays != null ? data.termDays : 0,
-          initialMonery: data.minInvestment,
-          interestRate: data.apy != null ? Number(data.apy) * 100 : 0,
-          productInfo: data.features,
-          productStateId: data.status
+        const data = res.data || {};
+        const fb = data.financeBase || {};
+        const lc = data.locale || {};
+        const ptRaw = fb.productType !== undefined ? fb.productType : data.productType;
+        const productType =
+          ptRaw !== undefined && ptRaw !== null && ptRaw !== ""
+            ? Number(ptRaw)
+            : undefined;
+        const apyRaw = fb.apy !== undefined ? fb.apy : data.apy;
+        const termRaw = fb.termDays !== undefined ? fb.termDays : data.termDays;
+        let resolvedTypeName =
+          fb.productTypeName ||
+          data.productTypeName ||
+          lc.productTypeName ||
+          "";
+        if (!resolvedTypeName && Array.isArray(data.locales) && data.locales.length) {
+          const hit = data.locales.find((l) => l.productTypeName);
+          resolvedTypeName = (hit && hit.productTypeName) || "";
+        }
+        if (!resolvedTypeName && productType != null && !Number.isNaN(productType)) {
+          resolvedTypeName = this.formatProductType(productType);
+        }
+
+        this.syncDialogLanguageTabs(data.locales);
+        this.formData.localeByLang = this.buildEmptyLocaleMap();
+
+        const stRaw =
+          fb.status !== undefined ? fb.status : data.status;
+        const statusNum =
+          stRaw !== undefined && stRaw !== null && stRaw !== ""
+            ? Number(stRaw)
+            : 2;
+
+        this.formData.id = data.id != null ? data.id : fb.id != null ? fb.id : undefined;
+        this.formData.financeBase = {
+          productType: Number.isNaN(productType) ? undefined : productType,
+          productTypeName: resolvedTypeName || "",
+          fundsType: fb.fundsType || data.fundsType || "USDT",
+          termDays:
+            productType === 2
+              ? null
+              : termRaw != null && termRaw !== ""
+                ? Number(termRaw)
+                : null,
+          minInvestment:
+            fb.minInvestment !== undefined
+              ? fb.minInvestment
+              : data.minInvestment,
+          apyPercent:
+            apyRaw != null && apyRaw !== ""
+              ? Number(apyRaw) * 100
+              : undefined,
+          status: Number.isNaN(statusNum) ? 2 : statusNum,
         };
-        this.whetherCurrent = data.productType === 2 ? 1 : 2;
-        this.getProductTypeAll();
-        if (Array.isArray(data.coverImg)) {
-          this.logoURL = data.coverImg.length > 0 ? (data.coverImg[0].url || data.coverImg[0]) : "";
+
+        const applyLocaleRow = (language, src) => {
+          if (!language) return;
+          const key = this.resolveLocaleTabKey(language);
+          if (!key) return;
+          if (!this.formData.localeByLang[key]) {
+            this.$set(this.formData.localeByLang, key, {
+              name: "",
+              features: "",
+            });
+          }
+          const t = this.formData.localeByLang[key];
+          t.name = src && src.name !== undefined && src.name !== null ? String(src.name) : "";
+          t.features =
+            src && src.features !== undefined && src.features !== null
+              ? String(src.features)
+              : "";
+        };
+        if (Array.isArray(data.locales) && data.locales.length) {
+          data.locales.forEach((l) => applyLocaleRow(l.language, l));
         } else {
-          this.logoURL = data.coverImg || "";
+          const lang = lc.language || data.language;
+          applyLocaleRow(lang, {
+            name: lc.name !== undefined ? lc.name : data.name,
+            features: lc.features !== undefined ? lc.features : data.features,
+          });
+        }
+
+        this.activeLocaleTab =
+          (this.dialogLangTabs[0] && this.dialogLangTabs[0].name) ||
+          (data.locales &&
+            data.locales[0] &&
+            data.locales[0].language &&
+            this.resolveLocaleTabKey(data.locales[0].language)) ||
+          (lc.language && this.resolveLocaleTabKey(lc.language)) ||
+          (data.language && this.resolveLocaleTabKey(data.language)) ||
+          "";
+        this.whetherCurrent = productType === 2 ? 1 : 2;
+        this.getProductTypeAll();
+        this.$nextTick(() => {
+          if (productType != null && !Number.isNaN(productType)) {
+            this.selectTypeList(productType);
+          }
+        });
+        const cover = fb.coverImg !== undefined ? fb.coverImg : data.coverImg;
+        if (Array.isArray(cover)) {
+          this.logoURL = cover.length > 0 ? (cover[0].url || cover[0]) : "";
+        } else {
+          this.logoURL = cover || "";
         }
         this.upState = true;
         this.dialogOpen = true;
@@ -522,20 +742,40 @@ export default {
               this.$modal.msgError("请先上传产品图片");
               return;
             }
+            const localesPayload = this.buildLocalesPayload();
+            if (!localesPayload.length) {
+              this.$modal.msgWarning("请至少填写一种语言的产品名称或介绍");
+              return;
+            }
+            const hasProductName = localesPayload.some(
+              (x) => x.name && String(x.name).trim()
+            );
+            if (!hasProductName) {
+              this.$modal.msgWarning("请至少填写一种语言的产品名称");
+              return;
+            }
+            const fb = this.formData.financeBase;
+            const pt = Number(fb.productType);
+            const termDays =
+              pt === 2 ? null : (fb.termDays === "" || fb.termDays == null ? null : Number(fb.termDays));
             const submitData = {
-              id: this.formData.id,
-              language: this.formData.language,
-              name: this.formData.productName,
-              type: Number(this.formData.productType),
-              fundsType: this.formData.fundsType,
-              termDays: Number(this.formData.productType) === 2 ? null : this.formData.productTime,
-              minInvestment: this.formData.initialMonery,
-              apy: this.formData.interestRate ? Number(this.formData.interestRate) / 100 : 0,
-              features: this.formData.productInfo,
-              status: this.formData.productStateId,
-              coverImg: coverImgUrl
+              financeBase: {
+                coverImg: coverImgUrl,
+                productType: pt,
+                productTypeName:
+                  fb.productTypeName != null ? String(fb.productTypeName).trim() : "",
+                fundsType: fb.fundsType || "USDT",
+                termDays,
+                minInvestment:
+                  fb.minInvestment === "" || fb.minInvestment == null ? null : Number(fb.minInvestment),
+                apy:
+                  fb.apyPercent === "" || fb.apyPercent == null ? 0 : Number(fb.apyPercent) / 100,
+                status: fb.status,
+              },
+              locales: localesPayload,
             };
             if (this.formData.id) {
+              submitData.id = this.formData.id;
               await productUpdate(submitData);
               this.$modal.msgSuccess("编辑成功");
               this.dialogOpen = false;
@@ -561,7 +801,7 @@ export default {
 
     productOnAndOff(row,type) {
       this.$modal.confirm('是否确认进行操作？').then(function () {
-        return productOnAndOff(row.id, type, row.language);
+        return productOnAndOff(row.id, type);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("操作成功");
@@ -605,5 +845,53 @@ export default {
   background-color: #fff;
   box-sizing: border-box;
   padding: 20px;
+}
+
+.product-dialog .form-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 12px;
+  padding-left: 4px;
+  border-left: 3px solid #409EFF;
+}
+
+.product-dialog .unit-suffix {
+  margin-left: 6px;
+  color: #909399;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.product-dialog .unit-hint {
+  margin-top: 4px;
+  color: #909399;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.product-dialog .locale-tab-hint {
+  font-size: 12px;
+  color: #909399;
+  margin: 0 0 12px 4px;
+  line-height: 1.5;
+}
+
+.product-dialog .locale-tabs >>> .el-tabs__header {
+  margin-bottom: 8px;
+}
+
+.product-dialog .locale-tabs >>> .el-tabs__nav-wrap::after {
+  height: 1px;
+}
+
+.product-dialog .locale-tab-panel {
+  padding-top: 4px;
+}
+
+.product-dialog .locale-empty-tip {
+  color: #909399;
+  font-size: 13px;
+  padding: 12px 4px;
 }
 </style>

@@ -40,6 +40,7 @@
 
         </div>
         <el-table :data="dataList" max-height="600" v-loading="loading">
+          <el-table-column label="序号" type="index" width="50" align="center" />
           <el-table-column label="订单编号" align="center" prop="orderNum" />
           <el-table-column label="订单金额" align="center">
             <template slot-scope="scope">
