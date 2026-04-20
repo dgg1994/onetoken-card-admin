@@ -32,6 +32,14 @@ export function productTypeAll(data) {
     })
 }
 
+/** 产品类型名称列表（GET，用于下拉与筛选） */
+export function productTypeListName() {
+    return request({
+        url: 'productType/listName',
+        method: 'get',
+    })
+}
+
 export function productTypeFind(id) {
     return request({
         url: 'productType/find/' + id,
