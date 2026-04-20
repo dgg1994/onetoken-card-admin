@@ -71,3 +71,11 @@ export function findNetwokList() {
         method: 'get',
     })
 }
+
+//查询设备类型
+export function findDeviceTypeList() {
+    return request({
+        url: 'dic/findDeviceType',
+        method: 'get',
+    })
+}
